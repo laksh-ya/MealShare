@@ -1,4 +1,3 @@
-import e from 'express';
 import mongoose from 'mongoose';
 
 // User Model - Core model for all users (students, staff, admin)
@@ -34,9 +33,8 @@ const UserSchema = new mongoose.Schema({
       default: null
     },
     qrCode: {
-      type: String,
-      default: null,
-
+      type: Buffer, // change from String to Buffer
+      default: null
     },
     qrStatus: { 
       breakfast: {
@@ -55,7 +53,14 @@ const UserSchema = new mongoose.Schema({
         enabled: { type: Boolean, default: false },
         redeemed: { type: Boolean, default: false }
       },
+
+      
   },
+  mealLastUpdated: {
+    type: Date,
+    default: null
+  }
+,
     numUsed: {
       type: Number,
       default: 0,

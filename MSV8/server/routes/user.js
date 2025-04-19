@@ -39,45 +39,82 @@ export const updateProfile = async (req, res) => {
 };
 
 
-// Upload QR code
-export const uploadQrCode = async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ errors: [{ msg: 'No file uploaded' }] });
-      }
-      
-      const user = await User.findById(req.user.id);
-      
-      if (!user) {
-        return res.status(404).json({ errors: [{ msg: 'User not found' }] });
-      }
-      
-      // If user already has a QR code, delete the old one
-      if (user.qrCode) {
 
-        // const oldPath = path.join(process.cwd(), user.qrCode);
-        // if (fs.existsSync(oldPath)) {
-        //   fs.unlinkSync(oldPath);
-        // }
-      }
+
+// // Upload QR code
+// export const uploadQrCode = async (req, res) => {
+//     try {
+//       if (!req.file) {
+//         return res.status(400).json({ errors: [{ msg: 'No file uploaded' }] });
+//       }
+//       const user = await User.findById(req.user.id);
       
-      // Save the new QR code path
-      user.qrCode = req.file.path;
-      user.updatedAt = Date.now();
+//       if (!user) {
+//         return res.status(404).json({ errors: [{ msg: 'User not found' }] });
+//       }
       
-      await user.save();
+//       if (user.qrCode) {
+
+  
+//       }
       
- 
+//       user.qrCode = req.file.path;
+//       user.updatedAt = Date.now();
       
-      res.json({ qrCode: req.file.path });
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server error');
-    }
-  };
+//       await user.save();
+      
+//       res.json({ qrCode: req.file.path });
+//     } catch (err) {
+//       console.error(err.message);
+//       res.status(500).send('Server error');
+//     }
+//   };
 
 
   // Get user QR code
+
+  const uploadQrCode  = async (req, res) => {
+    try {
+      const qrBuffer = req.body // this is already a Buffer
+      const email = req.headers['x-user-email']
+      const user = await User.findOne({ email })
+      if (!user) {
+        return res.status(404).json({ errors: [{ msg: 'User not found' }] });
+      }
+      user.qrCode = qrBuffer
+      await user.save()
+      console.log('qr uploaded bro 🔥')
+      res.status(200).json({ msg: 'qr uploaded bro 🔥' })
+    } catch (err) {
+
+      console.log('error saving qr:', err)
+      res.status(500).json({ err: 'failed to save qr' })
+    }
+  }
+
+  const getQrCode = async (req, res) => {
+    try {
+      const email = req.headers['x-user-email']
+      const user = await User.findOne({ email })
+  
+      if (!user) {
+        return res.status(404).json({ errors: [{ msg: 'User not found' }] })
+      }
+  
+      if (!user.qrCode) {
+        return res.status(404).json({ errors: [{ msg: 'QR code not uploaded yet, bro 😭' }] })
+      }
+  
+      console.log('qr fetched like a boss 🧠')
+      res.set('Content-Type', 'image/png') // adjust if you’re storing jpeg etc
+      res.send(user.qrCode)
+    } catch (err) {
+      console.log('error fetching qr:', err)
+      res.status(500).json({ err: 'failed to fetch qr from DB bro 💀' })
+    }
+  }
+
+
 export const getUserQrCode = async (req, res) => {
     try {
       const user = await User.findById(req.user.id).select('qrCode');
@@ -111,7 +148,19 @@ export const getQRCodeTime = async (req, res) => {
           return res.status(404).json({ errors: [{ msg: 'No QR code found for the given criteria' }] });
       }
       console.log(mealTimes);
+      const today = new Date().toDateString(); // "Mon Apr 14 2025"
+      const lastUpdated = new Date(user.mealLastUpdated).toDateString();
 
+      if (today !== lastUpdated) {
+      user.qrStatus = {
+        breakfast: { enabled: false, redeemed: false },
+        lunch: { enabled: false, redeemed: false },
+        snacks: { enabled: false, redeemed: false },
+        dinner: { enabled: false, redeemed: false }
+        };
+      user.mealLastUpdated = new Date();
+      await user.save();
+    }
       res.json({ mealTimes: mealTimes });
     } catch (error) {
       console.error(error.message);
@@ -135,6 +184,7 @@ export const setQRCodeTime = async (req, res) => {
         }
         user.qrStatus[mealTime].enabled = true; 
         user.qrStatus[mealTime].redeemed = false;
+        user.mealLastUpdated = new Date();
         await user.save();
 
         res.status(200).json({ message: 'Meal time set successfully', mealTime: user.mealTime });
@@ -143,7 +193,9 @@ export const setQRCodeTime = async (req, res) => {
         res.status(500).json({ errors: [{ msg: 'Server error' }] });
     }
 }
+
 router.post('/getQRCodeTime', getQRCodeTime);
 router.post('/setQRCodeTime', setQRCodeTime);
-
+router.post('/uploadQR', express.raw({ type: 'application/octet-stream',limit: '10mb' }), uploadQrCode);
+router.get('/getQR', getQrCode);
 export default router;
