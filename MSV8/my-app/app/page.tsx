@@ -27,6 +27,9 @@ export default function Home() {
             <Button asChild size="lg" className="px-8">
               <Link href="/staff-login">Staff Login</Link>
             </Button>
+            <Button asChild variant="secondary" size="lg" className="px-8">
+              <Link href="/admin-login">Admin Login</Link>
+            </Button>
           </div>
         </div>
       </main>
