@@ -14,13 +14,14 @@ import { Label } from "@/components/ui/label"
 import { Logo } from "@/components/logo"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useToast } from "@/hooks/use-toast"
 
 export default function Login() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const { staffLogin } = useAuth()
-  
   const router = useRouter()
+  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,6 +30,11 @@ export default function Login() {
       router.push("/dashboard/staff")
     } catch (error) {
       console.error("Login failed", error)
+      toast({
+        title: "Staff Login Failed",
+        description: "Invalid email or password",
+        variant: "destructive"
+      })
     }
   }
 

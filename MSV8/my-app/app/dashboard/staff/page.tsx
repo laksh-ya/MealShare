@@ -299,7 +299,7 @@ export default function StaffDashboard() {
 
   const handleRedeem = async (qr: QR) => {
     try {
-      const response = await axios.post(`${API_URL}/staff/fetchQRsByTime`, null, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/staff/fetchQRsByTime`, null, {
         headers: {
           'x-floor': qr.floor,
           'x-mealtime': qr.mealType.toLowerCase(),

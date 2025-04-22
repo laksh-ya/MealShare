@@ -81,7 +81,7 @@ export default function StudentDashboard() {
   const uploadQrToBackend = async (byteArray: Uint8Array, email: string) => {
     try {
       const response = await axios.post(
-        `${API_URL}/user/uploadQR`,
+        `${process.env.NEXT_PUBLIC_API_URL}/user/uploadQR`,
         byteArray,
         {
           headers: {
@@ -97,6 +97,21 @@ export default function StudentDashboard() {
     }
   }
 
+const fetchQrFromBackend = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/user/getQR`, {
+        headers: {
+          'x-user-email': user?.email,
+        },
+        responseType: 'blob',
+      })
+  
+      const url = URL.createObjectURL(response.data)
+      setQrCode(url)
+    } catch (err) {
+      console.error('bro messed up loading qr:', err)
+    }
+  }
   const handleQrUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -113,21 +128,6 @@ export default function StudentDashboard() {
       reader.readAsArrayBuffer(file)
       const url = URL.createObjectURL(file)
       setQrCode(url) // shows it right away
-    }
-  }
-  const fetchQrFromBackend = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/user/getQR`, {
-        headers: {
-          'x-user-email': user?.email, // 🧠🔥 send the email!
-        },
-        responseType: 'blob', // cuz u sending back buffer as image
-      })
-  
-      const url = URL.createObjectURL(response.data)
-      setQrCode(url)
-    } catch (err) {
-      console.error('bro messed up loading qr:', err)
     }
   }
   const handleProfileUpdate = () => {

@@ -9,20 +9,27 @@ import { Label } from "@/components/ui/label"
 import { Logo } from "@/components/logo"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useToast } from "@/hooks/use-toast"
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const { login } = useAuth()
+  const { adminLogin } = useAuth()
   const router = useRouter()
+  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await login(email, password)
+      await adminLogin(email, password)
       router.push("/dashboard/admin")
     } catch (error) {
       console.error("Admin login failed", error)
+      toast({
+        title: "Admin Login Failed",
+        description: "Invalid email or password",
+        variant: "destructive"
+      })
     }
   }
 

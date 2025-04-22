@@ -9,8 +9,13 @@ import staffRouter from './routes/staff.js';
 
 dotenv.config();
 const app = express();
-const PORT = 8001;
-app.use(cors({origin: 'http://localhost:3000'}));
+const PORT = process.env.PORT || 8001;
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.FRONTEND_URL 
+    : 'http://localhost:3000',
+  credentials: true
+}));
 app.use(express.json());
 app.use("/", router);
 app.use("/user", userRouter);
