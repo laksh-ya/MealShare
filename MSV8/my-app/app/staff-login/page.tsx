@@ -47,16 +47,19 @@ export default function Login() {
       <main className="flex-grow flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
-            <h2 className="text-2xl font-bold text-center">Login to MealShare</h2>
+            <h2 className="text-2xl font-bold text-center">Staff Login</h2>
+            <p className="text-center text-muted-foreground">
+              Login to access staff dashboard
+            </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Staff Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="Enter your staff email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -74,14 +77,11 @@ export default function Login() {
                 />
               </div>
               <Button type="submit" className="w-full">
-                Login
+                Staff Login
               </Button>
             </form>
           </CardContent>
           <CardFooter className="flex flex-col space-y-2">
-            <Link href="/signup" className="text-sm text-primary hover:underline">
-              Don&apos;t have an account? Sign up
-            </Link>
             <Link href="/" className="text-sm text-muted-foreground hover:underline">
               Back to Home
             </Link>

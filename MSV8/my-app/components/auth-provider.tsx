@@ -94,8 +94,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   const logout = () => {
+    const role = user?.role
     setUser(null)
     localStorage.removeItem("user")
+    
+    // Redirect based on role
+    if (role === 'admin') {
+      window.location.href = '/admin-login'
+    } else if (role === 'staff') {
+      window.location.href = '/staff-login'
+    } else {
+      window.location.href = '/login'
+    }
   }
 
   const signup = async (name: string, email: string, password: string, floor: string) => {
