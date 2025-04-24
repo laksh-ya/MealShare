@@ -17,10 +17,11 @@ type User = {
 type AuthContextType = {
   user: User | null
   login: (email: string, password: string) => Promise<void>
-  logout: () => void
+  adminLogin: (email: string, password: string) => Promise<void>  // Add this line
+  staffLogin: (email: string, password: string) => Promise<void>
   signup: (name: string, email: string, password: string, floor: string) => Promise<void>
-  updateUser: (updatedUser: Partial<User>) => void
-  staffLogin: (email: string, password: string) => Promise<void> // Add this
+  logout: () => void
+  updateUser: (user: Partial<User>) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)

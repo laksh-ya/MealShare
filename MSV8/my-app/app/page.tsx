@@ -9,6 +9,7 @@ export default function Home() {
       <header className="container mx-auto py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-8 lg:px-12 flex justify-between items-center">
         <div className="flex-shrink-0 scale-90 sm:scale-100">
           <Logo />
+  
         </div>
         <div className="ml-2 sm:ml-4">
           <ThemeToggle />
